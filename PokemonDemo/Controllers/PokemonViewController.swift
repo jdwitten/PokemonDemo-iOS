@@ -8,9 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, PokemonDelegate {
+class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, PokemonDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    
     var store: PokemonStore = PokemonStore(pokemon: [])
     var api: PokeNetworkAPI = PokeNetworkAPI()
     
@@ -21,7 +22,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.delegate = self
         tableView.dataSource = self
         store.delegate = self
-        tableView.rowHeight = 75
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.register(UINib(nibName: "PokemonTableViewCell",
                                  bundle: nil),
                            forCellReuseIdentifier: "PokemonTableViewCell")
@@ -50,27 +51,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "PokemonTableViewCell") as? PokemonTableViewCell else {
             return UITableViewCell()
         }
-        api.getPokemonForm(for: thisPokemon.name) { pokemonForm in
-            if let form = pokemonForm,
-                let frontSprite = form.sprites.front_default {
-                self.api.getImage(for: frontSprite) { data in
-                    if let data = data {
-                        DispatchQueue.main.async {
-                            cell.configure(name: thisPokemon.name, image: UIImage(data: data))
-                        }
-                    }
-                }
-            }
-        }
-        cell.configure(name: thisPokemon.name, image: nil)
+        loadPokemonImage(into: cell, for: thisPokemon.name)
         return cell
-        
     }
     
     func pokemonUpdated(with pokemon: [Pokemon]) {
         DispatchQueue.main.async {
             self.pokemon = pokemon
             self.tableView.reloadData()
+        }
+    }
+    
+    func loadPokemonImage(into cell: PokemonTableViewCell, for name: String) {
+        api.getPokemonForm(for: name) { pokemonForm in
+            if let form = pokemonForm,
+                let frontSprite = form.sprites.front_default {
+                self.api.getImage(for: frontSprite) { data in
+                    if let data = data {
+                        DispatchQueue.main.async {
+                            cell.configure(name: name, image: UIImage(data: data))
+                        }
+                    }
+                }
+            }
         }
     }
 }
