@@ -8,6 +8,7 @@
 
 import UIKit
 
+// Demo - 1: ViewControllers, Storyboards, and TableViews
 class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, PokemonDelegate {
     
     @IBOutlet weak var tableView: UITableView!
@@ -19,15 +20,22 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Demo - 6: TableViewDataSource and delegation
         tableView.delegate = self
         tableView.dataSource = self
+        
+        
         store.delegate = self
+        
+    
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(UINib(nibName: "PokemonTableViewCell",
                                  bundle: nil),
                            forCellReuseIdentifier: "PokemonTableViewCell")
     }
     
+    // Demo - 3: ViewController life cycle and loading data
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         api.getAllPokemon { pokemon in
@@ -35,6 +43,7 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
+    // Demo - 7: Loading Data into a TableView
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -46,12 +55,9 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
 //        cell.textLabel?.text = pokemon[indexPath.row].name
-//        return cell
-        let thisPokemon = pokemon[indexPath.row]
-        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "PokemonTableViewCell") as? PokemonTableViewCell else {
-            return UITableViewCell()
-        }
-        loadPokemonImage(into: cell, for: thisPokemon.name)
+        
+// Demo - 8: Custom Views/TableViewCells
+        let cell = createCustomPokemonCell(indexPath)
         return cell
     }
     
@@ -60,6 +66,15 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
             self.pokemon = pokemon
             self.tableView.reloadData()
         }
+    }
+    
+    func createCustomPokemonCell(_ indexPath: IndexPath) -> UITableViewCell {
+        let thisPokemon = pokemon[indexPath.row]
+        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "PokemonTableViewCell") as? PokemonTableViewCell else {
+            return UITableViewCell()
+        }
+        loadPokemonImage(into: cell, for: thisPokemon.name)
+        return cell
     }
     
     func loadPokemonImage(into cell: PokemonTableViewCell, for name: String) {

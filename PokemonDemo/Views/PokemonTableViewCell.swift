@@ -8,6 +8,7 @@
 
 import UIKit
 
+// Demo - 9: Using Interface Builder to create custom views with outlets
 class PokemonTableViewCell: UITableViewCell {
     @IBOutlet weak var pokemonImage: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!

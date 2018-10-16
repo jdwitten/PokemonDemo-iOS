@@ -8,12 +8,11 @@
 
 import Foundation
 
-protocol PokemonDelegate {
-    func pokemonUpdated(with pokemon: [Pokemon])
-}
-
+// Demo - 2: Models, Protocols, and Delegation
 class PokemonStore {
+    
     var delegate: PokemonDelegate?
+    
     private var pokemon: [Pokemon] {
         didSet {
             delegate?.pokemonUpdated(with: pokemon)
@@ -27,4 +26,8 @@ class PokemonStore {
     public func updatePokemon(_ pokemon: [Pokemon]) {
         self.pokemon = pokemon
     }
+}
+
+protocol PokemonDelegate {
+    func pokemonUpdated(with pokemon: [Pokemon])
 }
